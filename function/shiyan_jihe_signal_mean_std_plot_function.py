@@ -26,7 +26,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     if not os.path.exists(si_dj_path):
         os.makedirs(si_dj_path)
     # SI grade
-    data_SI_excel_name = os.path.join(os.path.join(base_dir, 'SI'), 'SI.xlsx')
+    data_SI_excel_name = os.path.join(base_dir, 'SI', 'SI.xlsx')
     # SI data read
     SI_biaozhun = pd.read_excel(data_SI_excel_name, 'SI_trend', usecols=[0, 1, 2])
 

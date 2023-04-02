@@ -178,10 +178,13 @@ with torch.no_grad():
                 data_quantitative_results = pd.DataFrame(
                     np.array(quantitative_results).T,
                     index=['L1~L2', 'L2~L3', 'L3~L4', 'L4~L5', 'L5~L1'],
-                    columns=['SI grade', 'SI percentage', 'DH percentage', 'DHI percentage', 'HDR/DWR percentage']
+                    columns=[
+                        'SI grade', 'SI percentage', 'DH percentage',
+                        'DHI percentage', 'HDR/DWR percentage'
+                    ]
                 )
-                data_quantitative_results['SI_grade'] = (
-                    data_quantitative_results['SI_grade'].astype(int)
+                data_quantitative_results['SI grade'] = (
+                    data_quantitative_results['SI grade'].astype(int)
                 )
 
                 quantitative_analysis_results_output_name_path = os.path.join(
