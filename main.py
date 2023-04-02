@@ -168,7 +168,7 @@ with torch.no_grad():
                 data_jihe_parameter = pd.DataFrame(
                     np.array(jihe_parameter).T,
                     index=['L1~L2', 'L2~L3', 'L3~L4', 'L4~L5', 'L5~L1'],
-                    columns=['HD', 'DHI', 'DWR']
+                    columns=['DH', 'DHI', 'HDR/DWR']
                 )
                 data_SI_parameter = pd.DataFrame(
                     np.array(SI_parameter).T,
@@ -178,7 +178,7 @@ with torch.no_grad():
                 data_quantitative_results = pd.DataFrame(
                     np.array(quantitative_results).T,
                     index=['L1~L2', 'L2~L3', 'L3~L4', 'L4~L5', 'L5~L1'],
-                    columns=['SI_grade', 'SI_per', 'DH_per', 'DHI_per', 'DWR_per']
+                    columns=['SI grade', 'SI percentage', 'DH percentage', 'DHI percentage', 'HDR/DWR percentage']
                 )
                 data_quantitative_results['SI_grade'] = (
                     data_quantitative_results['SI_grade'].astype(int)
