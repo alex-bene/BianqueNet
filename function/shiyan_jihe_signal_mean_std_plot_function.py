@@ -7,23 +7,113 @@ import matplotlib.pyplot as plt
     这个文件的功能是：作为一个函数，提供在标准上制作所有散点图的功能。
     包括，（1）在不同椎间盘结构位置上，制作SI，DH,DHI,HDR标准图谱上的散点图
     （2）在不同的椎间盘退变等级标准谱图上，制作每个结构位置的SI散点图
+    What this file does is: As a function, provide the ability to make all
+    scatterplots on the standard. Including, (1) Make SI, DH, DHI, HDR scatter
+    diagrams on the standard atlas of different intervertebral disc structures
+    (2) Make the SI scatter diagram of each structural position on the standard
+    spectra of different intervertebral disc degeneration grades
+
 """
 base_dir = './input/baseline_range'
 
 """
     保证版本号不能太新，否则报错。安装低版本：pip3 install xlrd==1.2.0
+    Make sure that the version number is not too new, otherwise an error will be
+    reported. Install the lower version: pip3 install xlrd==1.2.0
 """
-
 
 def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     if not os.path.exists(si_dj_path):
         os.makedirs(si_dj_path)
+    # SI grade
+    data_SI_excel_name = os.path.join(os.path.join(base_dir, 'SI'), 'SI.xlsx')
+    # SI data read
+    SI_biaozhun = pd.read_excel(data_SI_excel_name, 'SI_trend', usecols=[0, 1, 2])
+
+    data = {'SI': SI, 'DH': DH, 'DHI': DHI, 'HDR': HDR}
+    metrics = ["SI", "DH", "DHI", "HDR"]
+    vertebras = ["L1~L2", "L2~L3", "L3~L4", "L4~L5", "L5~S1"]
+    baselines = dict()
+    for metric in metrics:
+        baselines[metric] = dict()
+        metric_dir_name = metric if metric != "HDR" else "DWR"
+        for vertebra in vertebras:
+            baselines[metric][vertebra] = pd.read_excel(
+                os.path.join(
+                    base_dir, metric_dir_name, str(sex) if metric != "SI" else "",
+                    f'{metric_dir_name}_{vertebra.replace("~", "")}_trend.xlsx'
+                ), f'{metric_dir_name} trend',
+                usecols=[0, 1] if metric == "SI" else [1, 2, 3],
+                header = 1 if metric != "SI" else 0
+            )
+
+    # Standard color set, orange for men, blue for women
+    # Scatter color settings
+    c_point = sns.xkcd_palette(['black'])
+    if sex == 1:
+        c = sns.xkcd_palette(['orangered'])
+    else:
+        c = sns.xkcd_palette(['blue'])
+    # Scatter shape
+    marker = 'd'
+    # Scatter point abscissa setting, age
+    point_age = 5*(age-20)/70
+    # The ordinate of the scattered points is the value of each intervertebral disc position
+    fig_size = (8, 12)
+
+    for metric in metrics:
+        sns.set_context("talk", font_scale=1, rc={'line.linrwidth': 0.5})
+        plt.rc('font', family='Times New Roman')
+        fig = plt.figure(figsize=fig_size)
+        # f_DHI.tight_layout()# Adjust overall whitespace
+        fig.subplots_adjust(wspace=0.3, hspace=0)  # Adjust subplot spacing
+        for idx, vertebra in enumerate(vertebras):
+            fig.add_subplot(511+idx)
+            plt.title(metric)
+            ax = sns.lineplot(
+                x="age", y=vertebra, palette=c,
+                hue="gender" if metric != "SI" else None,
+                data=baselines[metric][vertebra], ci="sd"
+            )
+            if idx == 0 and metric != "SI":
+                plt.legend(loc='center right', bbox_to_anchor=(1, 0.8), ncol=1)
+            elif metric != "SI":
+                ax.legend_.remove()
+            ax.scatter(
+                point_age, data[metric][idx], s=80, marker=marker, c=c_point
+            )
+            # if idx != 0 and metric != "SI":
+            #     ax.legend_.remove()
+        fig.savefig(os.path.join(
+            si_dj_path, f'{metric if metric != "SI" else "SI_weizhi"}.png'
+        ),bbox_inches='tight')
+        # fig.show()
+
+    # Draw scatter points at each level
+    sns.set_context("talk", font_scale=1, rc={'line.linrwidth': 0.5})
+    plt.rc('font', family='Times New Roman')
+    plt.figure(figsize=(11.25, 12))
+    ax1 = sns.lineplot(
+        x="location", y="SI", hue="grade", data=SI_biaozhun, ci="sd"
+    )
+    for i in range(5):
+        ax1.scatter(i, SI[i], s=80, marker=marker, c=c_point)
+    plt.legend(loc='center right', bbox_to_anchor=(0.98, 0.855), ncol=1)
+    plt.savefig(os.path.join(si_dj_path, "SI_dj.png"), bbox_inches='tight')
+    # plt.show()
+
+def scatter_mean_std_orig(si_dj_path, sex, age, SI, DH, DHI, HDR):
+    if not os.path.exists(si_dj_path):
+        os.makedirs(si_dj_path)
     # SI的等级
+    # SI grade
     data_SI_excel_name = os.path.join(os.path.join(base_dir, 'SI'), 'SI' + '.xlsx')
     # SI数据读取
+    # SI data read
     SI_biaozhun = pd.read_excel(data_SI_excel_name, 'SI_trend', usecols=[0, 1, 2])
 
     # SI的位置
+    # SI's location
     SI_dir = os.path.join(base_dir, 'SI')
     data_SI_L1L2_excel_name = os.path.join(SI_dir, 'SI_L1L2_trend' + '.xlsx')
     data_SI_L2L3_excel_name = os.path.join(SI_dir, 'SI_L2L3_trend' + '.xlsx')
@@ -31,6 +121,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     data_SI_L4L5_excel_name = os.path.join(SI_dir, 'SI_L4L5_trend' + '.xlsx')
     data_SI_L5S1_excel_name = os.path.join(SI_dir, 'SI_L5S1_trend' + '.xlsx')
     # SI数据读取
+    # SI data read
     SI_L1L2 = pd.read_excel(data_SI_L1L2_excel_name, 'SI trend', usecols=[0, 1])
     SI_L2L3 = pd.read_excel(data_SI_L2L3_excel_name, 'SI trend', usecols=[0, 1])
     SI_L3L4 = pd.read_excel(data_SI_L3L4_excel_name, 'SI trend', usecols=[0, 1])
@@ -38,6 +129,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     SI_L5S1 = pd.read_excel(data_SI_L5S1_excel_name, 'SI trend', usecols=[0, 1])
 
     # DH的位置
+    # DH's location
     DH_dir_base = os.path.join(base_dir, 'DH')
     DH_dir = os.path.join(DH_dir_base, str(sex))
     data_DH_L1L2_excel_name = os.path.join(DH_dir, 'DH_L1L2_trend' + '.xlsx')
@@ -46,6 +138,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     data_DH_L4L5_excel_name = os.path.join(DH_dir, 'DH_L4L5_trend' + '.xlsx')
     data_DH_L5S1_excel_name = os.path.join(DH_dir, 'DH_L5S1_trend' + '.xlsx')
     # DHI数据读取
+    # DHI data read
     DH_L1L2 = pd.read_excel(data_DH_L1L2_excel_name, 'DH trend', usecols=[1, 2, 3], header=1)
     DH_L2L3 = pd.read_excel(data_DH_L2L3_excel_name, 'DH trend', usecols=[1, 2, 3], header=1)
     DH_L3L4 = pd.read_excel(data_DH_L3L4_excel_name, 'DH trend', usecols=[1, 2, 3], header=1)
@@ -53,6 +146,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     DH_L5S1 = pd.read_excel(data_DH_L5S1_excel_name, 'DH trend', usecols=[1, 2, 3], header=1)
 
     # DHI的位置
+    # DHI's location
     DHI_dir_base = os.path.join(base_dir, 'DHI')
     DHI_dir = os.path.join(DHI_dir_base, str(sex))
     data_DHI_L1L2_excel_name = os.path.join(DHI_dir, 'DHI_L1L2_trend' + '.xlsx')
@@ -61,6 +155,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     data_DHI_L4L5_excel_name = os.path.join(DHI_dir, 'DHI_L4L5_trend' + '.xlsx')
     data_DHI_L5S1_excel_name = os.path.join(DHI_dir, 'DHI_L5S1_trend' + '.xlsx')
     # DHI数据读取
+    # DHI data read
     DHI_L1L2 = pd.read_excel(data_DHI_L1L2_excel_name, 'DHI trend', usecols=[1, 2, 3], header=1)
     DHI_L2L3 = pd.read_excel(data_DHI_L2L3_excel_name, 'DHI trend', usecols=[1, 2, 3], header=1)
     DHI_L3L4 = pd.read_excel(data_DHI_L3L4_excel_name, 'DHI trend', usecols=[1, 2, 3], header=1)
@@ -68,6 +163,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     DHI_L5S1 = pd.read_excel(data_DHI_L5S1_excel_name, 'DHI trend', usecols=[1, 2, 3], header=1)
 
     # HDR位置
+    # HDR's location
     HDR_name = 'DWR'
     HDR_dir_base = os.path.join(base_dir, HDR_name)
     HDR_dir = os.path.join(HDR_dir_base, str(sex))
@@ -77,6 +173,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     data_HDR_L4L5_excel_name = os.path.join(HDR_dir, HDR_name + '_L4L5_trend' + '.xlsx')
     data_HDR_L5S1_excel_name = os.path.join(HDR_dir, HDR_name + '_L5S1_trend' + '.xlsx')
     # HDR数据读取
+    # HDR data read
     HDR_L1L2 = pd.read_excel(data_HDR_L1L2_excel_name, HDR_name + ' trend', usecols=[1, 2, 3], header=1)
     HDR_L2L3 = pd.read_excel(data_HDR_L2L3_excel_name, HDR_name + ' trend', usecols=[1, 2, 3], header=1)
     HDR_L3L4 = pd.read_excel(data_HDR_L3L4_excel_name, HDR_name + ' trend', usecols=[1, 2, 3], header=1)
@@ -84,25 +181,31 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     HDR_L5S1 = pd.read_excel(data_HDR_L5S1_excel_name, HDR_name + ' trend', usecols=[1, 2, 3], header=1)
 
     # 标准颜色设置,男性橙色，女性蓝色
+    # Standard color set, orange for men, blue for women
     # 散点颜色设置
+    # Scatter color settings
     c_point = sns.xkcd_palette(['black'])
     if sex == 1:
         c = sns.xkcd_palette(['orangered'])
     else:
         c = sns.xkcd_palette(['blue'])
     # 散点形状
+    # Scatter shape
     marker = 'd'
     # 散点横坐标设置，年龄
+    # Scatter point abscissa setting, age
     point_age = 5*(age-20)/70
     # 散点纵坐标是各个椎间盘位置的值
+    # The ordinate of the scattered points is the value of each intervertebral disc position
     fig_size = (8, 12)
 
     # SI在每个椎间盘结构位置的上的散点图++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Scatterplot of SI over the location of each intervertebral disc structure
     sns.set_context("talk", font_scale=1, rc={'line.linrwidth': 0.5})
     plt.rc('font', family='Times New Roman')
     f_SI = plt.figure(figsize=fig_size)
-    # f_DHI.tight_layout()#调整整体空白
-    plt.subplots_adjust(wspace=0.3, hspace=0)  # 调整子图间距
+    # f_DHI.tight_layout()#调整整体空白 Adjust overall whitespace
+    plt.subplots_adjust(wspace=0.3, hspace=0)  # 调整子图间距 Adjust subplot spacing
 
     # L1L2
     f_SI.add_subplot(511)
@@ -133,7 +236,7 @@ def scatter_mean_std(si_dj_path, sex, age, SI, DH, DHI, HDR):
     plt.savefig(os.path.join(si_dj_path, "SI_weizhi.png"), bbox_inches='tight')
 
     # 在每个等级处画散点++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+    # Draw scatter points at each level
     sns.set_context("talk", font_scale=1, rc={'line.linrwidth': 0.5})
     plt.rc('font', family='Times New Roman')
     plt.figure(figsize=(11.25, 12))
