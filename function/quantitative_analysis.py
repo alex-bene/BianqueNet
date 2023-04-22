@@ -1,8 +1,4 @@
 import numpy as np
-import time
-import pandas as pd
-import os
-
 
 # 每个等级的信号强度峰值差标准，均值和标准差
 SI_mean = np.array([121.97, 95.34, 72.34, 44.63, 20.60])
@@ -50,7 +46,10 @@ def signal_fenji(signal_value):
         temp_deta_each_SI[first_min] = 1000
         seco_min = temp_deta_each_SI.index(min(temp_deta_each_SI))
 
-        distance = np.abs(each_SI - SI_mean[first_min]) / SI_std[first_min] - np.abs(each_SI - SI_mean[seco_min]) / SI_std[seco_min]
+        distance = (
+            np.abs(each_SI - SI_mean[first_min]) / SI_std[first_min]
+            - np.abs(each_SI - SI_mean[seco_min]) / SI_std[seco_min]
+        )
 
         if distance > 0:
             each_SI_grade = seco_min + 1
@@ -67,7 +66,7 @@ def SI_quantitative(SI_input):
 
 def DH_quantitative(DH_input, sex_input):
     if sex_input == 0:
-        taxian_per = -(1 - DH_input/DH_male_mean)
+        taxian_per = -(1 - DH_input / DH_male_mean)
     else:
         taxian_per = -(1 - DH_input / DH_female_mean)
 
@@ -76,18 +75,18 @@ def DH_quantitative(DH_input, sex_input):
 
 def DHI_quantitative(DHI_input, sex_input):
     if sex_input == 0:
-        taxian_per = (DHI_input-DHI_male_mean)/DHI_male_std
+        taxian_per = (DHI_input - DHI_male_mean) / DHI_male_std
     else:
-        taxian_per = (DHI_input-DHI_female_mean)/DHI_female_std
+        taxian_per = (DHI_input - DHI_female_mean) / DHI_female_std
 
     return taxian_per
 
 
 def DWR_quantitative(DWR_input, sex_input):
     if sex_input == 0:
-        taxian_per = (DWR_input-DWR_male_mean)/DWR_male_std
+        taxian_per = (DWR_input - DWR_male_mean) / DWR_male_std
     else:
-        taxian_per = (DWR_input-DWR_female_mean)/DWR_female_std
+        taxian_per = (DWR_input - DWR_female_mean) / DWR_female_std
 
     return taxian_per
 

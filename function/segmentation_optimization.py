@@ -1,10 +1,12 @@
-import numpy as np
 import cv2
+import numpy as np
 
 
 def max_area_extract(input_chanel):
-    chanel2 = np.array(input_chanel, dtype='uint8')
-    contours, hierarchy = cv2.findContours(chanel2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    chanel2 = np.array(input_chanel, dtype="uint8")
+    contours, hierarchy = cv2.findContours(
+        chanel2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+    )
     if len(contours) > 1:
         area_list = []
         img_contours = []
@@ -19,8 +21,8 @@ def max_area_extract(input_chanel):
         max_where = np.where(area_list == np.max(area_list, axis=0))
         max_area_chenal = max_where[0]
         img_area_chenal_max = img_area_chenal[max_area_chenal[0]]
-        img_area_chenal_max = np.array(img_area_chenal_max, dtype='float32')
-        out_chanel = img_area_chenal_max/255
+        img_area_chenal_max = np.array(img_area_chenal_max, dtype="float32")
+        out_chanel = img_area_chenal_max / 255
 
     else:
         out_chanel = input_chanel
@@ -44,7 +46,7 @@ def seg_opt(output, mask=None):
                 dst = max_area_extract(chanel2)
             else:
                 dst = max_area_extract(chanel2)
-                rate = np.sum(dst)/np.sum(chanel2)
+                rate = np.sum(dst) / np.sum(chanel2)
                 if rate < 0.95:
                     chanel2 = cv2.erode(chanel2, kernel, iterations=1)
                     dst = cv2.dilate(chanel2, kernel, iterations=1)

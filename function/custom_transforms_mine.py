@@ -1,8 +1,8 @@
-import torch
 import random
-import numpy as np
 
-from PIL import Image, ImageOps, ImageFilter
+import numpy as np
+import torch
+from PIL import Image, ImageFilter, ImageOps
 
 
 class Normalize_img(object):
@@ -12,7 +12,12 @@ class Normalize_img(object):
         std (tuple): standard deviations for each channel.
         @ 具体数值来自train文件夹
     """
-    def __init__(self, mean=(0.2703814, 0.2703814, 0.2703814), std=(0.24898738, 0.24898738, 0.24898738)):
+
+    def __init__(
+        self,
+        mean=(0.2703814, 0.2703814, 0.2703814),
+        std=(0.24898738, 0.24898738, 0.24898738),
+    ):
         self.mean = mean
         self.std = std
 
@@ -66,7 +71,11 @@ class Normalize(object):
         std (tuple): standard deviations for each channel.
     """
 
-    def __init__(self, mean=(0.17801675, 0.17801675, 0.17801675), std=(0.17522617, 0.17522617, 0.17522617)):
+    def __init__(
+        self,
+        mean=(0.17801675, 0.17801675, 0.17801675),
+        std=(0.17522617, 0.17522617, 0.17522617),
+    ):
         self.mean = mean
         self.std = std
 
@@ -102,7 +111,12 @@ class Normalize_Totensor(object):
         mean (tuple): means for each channel.
         std (tuple): standard deviations for each channel.
     """
-    def __init__(self, mean=(0.18074335, 0.18074335, 0.18074335), std=(0.18184102, 0.18184102, 0.18184102)):
+
+    def __init__(
+        self,
+        mean=(0.18074335, 0.18074335, 0.18074335),
+        std=(0.18184102, 0.18184102, 0.18184102),
+    ):
         self.mean = mean
         self.std = std
 
@@ -121,14 +135,13 @@ class Normalize_Totensor(object):
 
 class RandomHorizontalFlip(object):
     def __call__(self, sample):
-        img = sample['image']
-        mask = sample['label']
+        img = sample["image"]
+        mask = sample["label"]
         if random.random() < 0.5:
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
             mask = mask.transpose(Image.FLIP_LEFT_RIGHT)
 
-        return {'image': img,
-                'label': mask}
+        return {"image": img, "label": mask}
 
 
 class RandomRotate(object):
@@ -136,7 +149,7 @@ class RandomRotate(object):
         self.degree = degree
 
     def __call__(self, img, mask):
-        rotate_degree = random.uniform(-1*self.degree, self.degree)
+        rotate_degree = random.uniform(-1 * self.degree, self.degree)
         img = img.rotate(rotate_degree, Image.BILINEAR)
         mask = mask.rotate(rotate_degree, Image.NEAREST)
 
@@ -146,8 +159,7 @@ class RandomRotate(object):
 class RandomGaussianBlur(object):
     def __call__(self, img, mask):
         if random.random() < 0.5:
-            img = img.filter(ImageFilter.GaussianBlur(
-                radius=random.random()))
+            img = img.filter(ImageFilter.GaussianBlur(radius=random.random()))
 
         return img, mask
 
@@ -155,8 +167,7 @@ class RandomGaussianBlur(object):
 class RandomGaussianBlur_img(object):
     def __call__(self, img):
         if random.random() < 0.5:
-            img = img.filter(ImageFilter.GaussianBlur(
-                radius=random.random()))
+            img = img.filter(ImageFilter.GaussianBlur(radius=random.random()))
         return img
 
 
@@ -168,7 +179,9 @@ class RandomScaleCrop(object):
 
     def __call__(self, img, mask):
         # random scale (short edge)
-        short_size = random.randint(int(self.base_size * 0.95), int(self.base_size * 1.05))
+        short_size = random.randint(
+            int(self.base_size * 0.95), int(self.base_size * 1.05)
+        )
         w, h = img.size
         if h > w:
             ow = short_size
@@ -183,7 +196,9 @@ class RandomScaleCrop(object):
             padh = self.crop_size - oh if oh < self.crop_size else 0
             padw = self.crop_size - ow if ow < self.crop_size else 0
             img = ImageOps.expand(img, border=(0, 0, padw, padh), fill=0)
-            mask = ImageOps.expand(mask, border=(0, 0, padw, padh), fill=self.fill)
+            mask = ImageOps.expand(
+                mask, border=(0, 0, padw, padh), fill=self.fill
+            )
         # random crop crop_size
         w, h = img.size
         x1 = random.randint(0, w - self.crop_size)
@@ -210,8 +225,8 @@ class FixScaleCrop(object):
         mask = mask.resize((ow, oh), Image.NEAREST)
         # center crop
         w, h = img.size
-        x1 = int(round((w - self.crop_size) / 2.))
-        y1 = int(round((h - self.crop_size) / 2.))
+        x1 = int(round((w - self.crop_size) / 2.0))
+        y1 = int(round((h - self.crop_size) / 2.0))
         img = img.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
         mask = mask.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
 
@@ -223,12 +238,9 @@ class FixedResize(object):
         self.size = (size, size)  # size: (h, w)
 
     def __call__(self, img, mask):
-
         assert img.size == mask.size
 
         img = img.resize(self.size, Image.BILINEAR)
         mask = mask.resize(self.size, Image.NEAREST)
 
         return img, mask
-
-

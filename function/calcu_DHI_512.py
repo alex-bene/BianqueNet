@@ -1,6 +1,7 @@
-import numpy as np
-import cv2
 import math
+
+import cv2
+import numpy as np
 
 
 # VH ********************************************************************************
@@ -15,8 +16,17 @@ def calcu_HV(L1_calcu_HV):
     minDistance = 21
     block_size_s = 9
     k_s = 0.04
-    corners_st = cv2.goodFeaturesToTrack(gray_st, maxCorners, qualityLevel, minDistance, corners=None, mask=None,
-                                         blockSize=block_size_s, useHarrisDetector=None, k=k_s)
+    corners_st = cv2.goodFeaturesToTrack(
+        gray_st,
+        maxCorners,
+        qualityLevel,
+        minDistance,
+        corners=None,
+        mask=None,
+        blockSize=block_size_s,
+        useHarrisDetector=None,
+        k=k_s,
+    )
 
     # 第二种
     corners_label_final2 = np.int0(np.squeeze(corners_st))
@@ -80,12 +90,19 @@ def calcu_HV(L1_calcu_HV):
         point_L_h = point_L_h_bf_test.copy()
     else:
         # 打印角点数，起提示作用
-        print('The number of corners of the detected cone is', len(point_L_h_bf_test))
+        print(
+            "The number of corners of the detected cone is",
+            len(point_L_h_bf_test),
+        )
         point_L_w = point_L_w_bf_test.copy()
         point_L_h = point_L_h_bf_test.copy()
     # 计算椎体的宽度
-    L_wid_up = math.hypot((point_L_h[0] - point_L_h[1]), (point_L_w[0] - point_L_w[1]))
-    L_wid_down = math.hypot((point_L_h[2] - point_L_h[3]), (point_L_w[2] - point_L_w[3]))
+    L_wid_up = math.hypot(
+        (point_L_h[0] - point_L_h[1]), (point_L_w[0] - point_L_w[1])
+    )
+    L_wid_down = math.hypot(
+        (point_L_h[2] - point_L_h[3]), (point_L_w[2] - point_L_w[3])
+    )
     L_wid = (L_wid_up + L_wid_down) / 2.0
     HV = np.sum(src) / L_wid
     return HV, point_L_h, point_L_w
@@ -105,8 +122,17 @@ def calcu_HV_S1(L1_calcu_HV):
     minDistance = 21
     block_size_s = 9
     k_s = 0.04
-    corners_st = cv2.goodFeaturesToTrack(gray_st, maxCorners, qualityLevel, minDistance, corners=None, mask=None,
-                                         blockSize=block_size_s, useHarrisDetector=None, k=k_s)
+    corners_st = cv2.goodFeaturesToTrack(
+        gray_st,
+        maxCorners,
+        qualityLevel,
+        minDistance,
+        corners=None,
+        mask=None,
+        blockSize=block_size_s,
+        useHarrisDetector=None,
+        k=k_s,
+    )
     # 第二种
     corners_label_final2 = np.int0(np.squeeze(corners_st))
     corners_label_final = corners_label_final2.copy()
@@ -132,7 +158,9 @@ def calcu_HV_S1(L1_calcu_HV):
     corners_label_zanshi.remove(b_b)
     corners_label_zanshi = np.array(corners_label_zanshi)
 
-    if (corners_label_zanshi[0,0]+corners_label_zanshi[0,1]) > (corners_label_zanshi[1,0]+corners_label_zanshi[1,1]):
+    if (corners_label_zanshi[0, 0] + corners_label_zanshi[0, 1]) > (
+        corners_label_zanshi[1, 0] + corners_label_zanshi[1, 1]
+    ):
         # 第3个
         corners_label_final[2, 0] = corners_label_zanshi[0, 0]  # w
         corners_label_final[2, 1] = corners_label_zanshi[0, 1]  # h
@@ -168,13 +196,20 @@ def calcu_HV_S1(L1_calcu_HV):
         point_L_h = point_L_h_bf_test.copy()
     else:
         # 打印角点数，起提示作用
-        print('The number of corners of the detected cone is', len(point_L_h_bf_test))
+        print(
+            "The number of corners of the detected cone is",
+            len(point_L_h_bf_test),
+        )
         point_L_w = point_L_w_bf_test.copy()
         point_L_h = point_L_h_bf_test.copy()
 
     # 现在得到四个点，计算椎体的宽度
-    L_wid_up = math.hypot((point_L_h[0] - point_L_h[1]), (point_L_w[0] - point_L_w[1]))
-    L_wid_down = math.hypot((point_L_h[2] - point_L_h[3]), (point_L_w[2] - point_L_w[3]))
+    L_wid_up = math.hypot(
+        (point_L_h[0] - point_L_h[1]), (point_L_w[0] - point_L_w[1])
+    )
+    L_wid_down = math.hypot(
+        (point_L_h[2] - point_L_h[3]), (point_L_w[2] - point_L_w[3])
+    )
     L_wid = (L_wid_up + L_wid_down) / 2.0
     HV = np.sum(src) / L_wid
     return HV, point_L_h, point_L_w
@@ -191,7 +226,7 @@ def calcu_big_WD(L1_L2_disc_calcu_HD, point_D12_1, point_D12_2):
     L1_L2_disc_calcu_HD = np.array(L1_L2_disc_calcu_HD)
     len_pic = len(L1_L2_disc_calcu_HD)
     if h0 == h1:
-        print('斜率为零！')
+        print("斜率为零！")
         # 计算最右边的点,从右边中点开始往右遍历，记录像素值为0时，左边一个点
         for s in range(w1, len_pic):
             if L1_L2_disc_calcu_HD[h1, s] == 0:
@@ -205,7 +240,9 @@ def calcu_big_WD(L1_L2_disc_calcu_HD, point_D12_1, point_D12_2):
                 break
 
     else:
-        m, b = slope(point_D12_1[0], point_D12_1[1], point_D12_2[0], point_D12_2[1])  # 计算斜率还是用没有取整的数，为了精确
+        m, b = slope(
+            point_D12_1[0], point_D12_1[1], point_D12_2[0], point_D12_2[1]
+        )  # 计算斜率还是用没有取整的数，为了精确
         # 计算最右边的点,从右边中点开始往右遍历，记录像素值为0时，左边一个点
         for s in range(w1, len_pic):
             if L1_L2_disc_calcu_HD[int(m * s + b), s] == 0:
@@ -225,7 +262,9 @@ def calcu_big_WD(L1_L2_disc_calcu_HD, point_D12_1, point_D12_2):
 
 
 # calcu_WD计算腰椎间盘宽度，腰椎间盘80%区域四个分割点
-def calcu_WD(L1_L2_disc_calcu_HD, point_L1_h, point_L1_w, point_L2_h, point_L2_w):
+def calcu_WD(
+    L1_L2_disc_calcu_HD, point_L1_h, point_L1_w, point_L2_h, point_L2_w
+):
     point_fenge = []
     # 上一个椎体的下面两个顶点，下一椎体的上面两个顶点
     point_L1_3 = np.array([point_L1_h[2], point_L1_w[2]])
@@ -248,34 +287,98 @@ def calcu_WD(L1_L2_disc_calcu_HD, point_L1_h, point_L1_w, point_L2_h, point_L2_w
     # 计算腰椎间盘80%区域四个分割点,分割占比miu=0.8，分割边界的高度qiang=1，表示一个单位的delta_12_w
     miu = 0.8
     qiang = 0.75  # 0.75
-    miu_half = 0.5*miu
-    qiang_half = 0.5*qiang
+    miu_half = 0.5 * miu
+    qiang_half = 0.5 * qiang
     # 在这里要分两种情况，一种是前后中点连线的斜率是负的，前中点高于后中点（h值小）：另一种是正的，前中点低于后中点（h值大）
     if point_D12_1[0] < point_D12_2[0]:  # 对比h值
-        point_D12_c0lu = np.array([point_D12_c0[0] - miu_half * delta_12_h - qiang_half * delta_12_w,
-                                   point_D12_c0[1] - miu_half * delta_12_w + qiang_half * delta_12_h])
+        point_D12_c0lu = np.array(
+            [
+                point_D12_c0[0]
+                - miu_half * delta_12_h
+                - qiang_half * delta_12_w,
+                point_D12_c0[1]
+                - miu_half * delta_12_w
+                + qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0lu))
-        point_D12_c0ld = np.array([point_D12_c0[0] - miu_half * delta_12_h + qiang_half * delta_12_w,
-                                   point_D12_c0[1] - miu_half * delta_12_w - qiang_half * delta_12_h])
+        point_D12_c0ld = np.array(
+            [
+                point_D12_c0[0]
+                - miu_half * delta_12_h
+                + qiang_half * delta_12_w,
+                point_D12_c0[1]
+                - miu_half * delta_12_w
+                - qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0ld))
-        point_D12_c0ru = np.array([point_D12_c0[0] + miu_half * delta_12_h - qiang_half * delta_12_w,
-                                   point_D12_c0[1] + miu_half * delta_12_w + qiang_half * delta_12_h])
+        point_D12_c0ru = np.array(
+            [
+                point_D12_c0[0]
+                + miu_half * delta_12_h
+                - qiang_half * delta_12_w,
+                point_D12_c0[1]
+                + miu_half * delta_12_w
+                + qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0ru))
-        point_D12_c0rd = np.array([point_D12_c0[0] + miu_half * delta_12_h + qiang_half * delta_12_w,
-                                   point_D12_c0[1] + miu_half * delta_12_w - qiang_half * delta_12_h])
+        point_D12_c0rd = np.array(
+            [
+                point_D12_c0[0]
+                + miu_half * delta_12_h
+                + qiang_half * delta_12_w,
+                point_D12_c0[1]
+                + miu_half * delta_12_w
+                - qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0rd))
     else:
-        point_D12_c0lu = np.array([point_D12_c0[0] + miu_half * delta_12_h - qiang_half * delta_12_w,
-                                   point_D12_c0[1] - miu_half * delta_12_w - qiang_half * delta_12_h])
+        point_D12_c0lu = np.array(
+            [
+                point_D12_c0[0]
+                + miu_half * delta_12_h
+                - qiang_half * delta_12_w,
+                point_D12_c0[1]
+                - miu_half * delta_12_w
+                - qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0lu))
-        point_D12_c0ld = np.array([point_D12_c0[0] + miu_half * delta_12_h + qiang_half * delta_12_w,
-                                   point_D12_c0[1] - miu_half * delta_12_w + qiang_half * delta_12_h])
+        point_D12_c0ld = np.array(
+            [
+                point_D12_c0[0]
+                + miu_half * delta_12_h
+                + qiang_half * delta_12_w,
+                point_D12_c0[1]
+                - miu_half * delta_12_w
+                + qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0ld))
-        point_D12_c0ru = np.array([point_D12_c0[0] - miu_half * delta_12_h - qiang_half * delta_12_w,
-                                   point_D12_c0[1] + miu_half * delta_12_w - qiang_half * delta_12_h])
+        point_D12_c0ru = np.array(
+            [
+                point_D12_c0[0]
+                - miu_half * delta_12_h
+                - qiang_half * delta_12_w,
+                point_D12_c0[1]
+                + miu_half * delta_12_w
+                - qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0ru))
-        point_D12_c0rd = np.array([point_D12_c0[0] - miu_half * delta_12_h + qiang_half * delta_12_w,
-                                   point_D12_c0[1] + miu_half * delta_12_w + qiang_half * delta_12_h])
+        point_D12_c0rd = np.array(
+            [
+                point_D12_c0[0]
+                - miu_half * delta_12_h
+                + qiang_half * delta_12_w,
+                point_D12_c0[1]
+                + miu_half * delta_12_w
+                + qiang_half * delta_12_h,
+            ]
+        )
         point_fenge.append(np.int0(point_D12_c0rd))
 
     return small_WD, big_WD, point_fenge
@@ -284,8 +387,8 @@ def calcu_WD(L1_L2_disc_calcu_HD, point_L1_h, point_L1_w, point_L2_h, point_L2_w
 # DH ********************************************************************************
 # 计算斜率
 def slope(h0, w0, h1, w1):
-    m = (h1-h0)/(w1-w0)  # 把h当成y，w当成x,
-    b = h0 - m*w0
+    m = (h1 - h0) / (w1 - w0)  # 把h当成y，w当成x,
+    b = h0 - m * w0
     return m, b
 
 
@@ -294,14 +397,14 @@ def get_pixel(h0, w0, h1, w1):
     piont_h = []
     piont_w = []
     if w0 == w1:
-        print('斜率不存在！')
+        print("斜率不存在！")
         for j in range(h0, h1):
             piont_h.append(j)
             piont_w.append(w0)
     else:
         m, b = slope(h0, w0, h1, w1)
         for j in range(h0, h1):
-            point_w_temp = (j - b)/m
+            point_w_temp = (j - b) / m
             piont_w.append(round(point_w_temp))
             piont_h.append(j)
 
@@ -309,7 +412,14 @@ def get_pixel(h0, w0, h1, w1):
 
 
 # calcu_HD计算腰椎间盘高度
-def calcu_HD(L1_L2_disc_calcu_HD, point_D12_l_up, point_D12_l_down, point_D12_r_up, point_D12_r_down, w_D):
+def calcu_HD(
+    L1_L2_disc_calcu_HD,
+    point_D12_l_up,
+    point_D12_l_down,
+    point_D12_r_up,
+    point_D12_r_down,
+    w_D,
+):
     L1_L2_disc_HD = L1_L2_disc_calcu_HD.copy()
     len_pic = len(L1_L2_disc_HD)
     # 腰椎间盘80%区域分割点，四个
@@ -318,22 +428,30 @@ def calcu_HD(L1_L2_disc_calcu_HD, point_D12_l_up, point_D12_l_down, point_D12_r_
     point_D12_r_up = point_D12_r_up
     point_D12_r_down = point_D12_r_down
     # 腰椎间盘80%区域分割点连成的两条直线（前）上的所有像素点
-    point_D12_l_up2down_h, point_D12_l_up2down_w = get_pixel(point_D12_l_up[0], point_D12_l_up[1], point_D12_l_down[0],
-                                                             point_D12_l_down[1])
+    point_D12_l_up2down_h, point_D12_l_up2down_w = get_pixel(
+        point_D12_l_up[0],
+        point_D12_l_up[1],
+        point_D12_l_down[0],
+        point_D12_l_down[1],
+    )
     len_D12_l_up2down_h = len(point_D12_l_up2down_h)
     # 从整个腰椎间盘取80%，去除前10%
     for j in range(len_D12_l_up2down_h):
         for i in range(point_D12_l_up2down_w[j]):
             L1_L2_disc_HD[point_D12_l_up2down_h[j], i] = 0
-    point_D12_r_up2down_h, point_D12_r_up2down_w = get_pixel(point_D12_r_up[0], point_D12_r_up[1], point_D12_r_down[0],
-                                                             point_D12_r_down[1])
+    point_D12_r_up2down_h, point_D12_r_up2down_w = get_pixel(
+        point_D12_r_up[0],
+        point_D12_r_up[1],
+        point_D12_r_down[0],
+        point_D12_r_down[1],
+    )
     len_D12_r_up2down_h = len(point_D12_r_up2down_h)
     # 从整个腰椎间盘取80%，去除后10%
     for j in range(len_D12_r_up2down_h):
         for i in range(point_D12_r_up2down_w[j], len_pic):
             L1_L2_disc_HD[point_D12_r_up2down_h[j], i] = 0
     sum_A = np.sum(L1_L2_disc_HD)
-    HD = sum_A/w_D
+    HD = sum_A / w_D
     return HD
 
 
@@ -354,7 +472,7 @@ def calcu_DHI(output):
     point_fenge_big = []
 
     # DHI12
-    print('Calculating the DHI of the L1_L2_disc......')
+    print("Calculating the DHI of the L1_L2_disc......")
     L1 = output[2, :, :]
     HV1, point_L1_h, point_L1_w = calcu_HV(L1)
     HV_big.append(HV1)
@@ -362,108 +480,184 @@ def calcu_DHI(output):
     L2 = output[4, :, :]
     HV2, point_L2_h, point_L2_w = calcu_HV(L2)
     HV_big.append(HV2)
-    small_WD12, big_WD12, point_fenge12 = calcu_WD(L1_L2_disc, point_L1_h, point_L1_w, point_L2_h, point_L2_w)
+    small_WD12, big_WD12, point_fenge12 = calcu_WD(
+        L1_L2_disc, point_L1_h, point_L1_w, point_L2_h, point_L2_w
+    )
     WD_big.append(big_WD12)
     point_fenge_big.append(np.array(point_fenge12))
-    DH12 = calcu_HD(L1_L2_disc, point_fenge12[0], point_fenge12[1], point_fenge12[2], point_fenge12[3], small_WD12)
+    DH12 = calcu_HD(
+        L1_L2_disc,
+        point_fenge12[0],
+        point_fenge12[1],
+        point_fenge12[2],
+        point_fenge12[3],
+        small_WD12,
+    )
     HD_big.append(DH12)
     # 计算DHI指数
     DHI12 = 2 * DH12 / (HV1 + HV2)
     DHI_big.append(DHI12)
-    print('The DHI of the L1_L2_disc is ', DHI12)
+    print("The DHI of the L1_L2_disc is ", DHI12)
     # 计算高宽比
     DWR12 = DH12 / big_WD12
     DWR_big.append(DWR12)
-    print('The DWR of the L1_L2_disc is ', DWR12)
+    print("The DWR of the L1_L2_disc is ", DWR12)
 
     # DHI23
-    print('Calculating the DHI of the L2_L3_disc......')
+    print("Calculating the DHI of the L2_L3_disc......")
     L2_L3_disc = output[5, :, :]
     L3 = output[6, :, :]
     HV3, point_L3_h, point_L3_w = calcu_HV(L3)
     HV_big.append(HV3)
-    small_WD23, big_WD23, point_fenge23 = calcu_WD(L2_L3_disc, point_L2_h, point_L2_w, point_L3_h, point_L3_w)
+    small_WD23, big_WD23, point_fenge23 = calcu_WD(
+        L2_L3_disc, point_L2_h, point_L2_w, point_L3_h, point_L3_w
+    )
     WD_big.append(big_WD23)
     point_fenge_big.append(np.array(point_fenge23))
-    DH23 = calcu_HD(L2_L3_disc, point_fenge23[0], point_fenge23[1], point_fenge23[2], point_fenge23[3], small_WD23)
+    DH23 = calcu_HD(
+        L2_L3_disc,
+        point_fenge23[0],
+        point_fenge23[1],
+        point_fenge23[2],
+        point_fenge23[3],
+        small_WD23,
+    )
     HD_big.append(DH23)
     DHI23 = 2 * DH23 / (HV2 + HV3)
     DHI_big.append(DHI23)
-    print('The DHI of the L2_L3_disc is ', DHI23)
+    print("The DHI of the L2_L3_disc is ", DHI23)
     # 计算高宽比
     DWR23 = DH23 / big_WD23
     DWR_big.append(DWR23)
-    print('The DWR of the L2_L3_disc is ', DWR23)
+    print("The DWR of the L2_L3_disc is ", DWR23)
 
     # DHI34
-    print('Calculating the DHI of the L3_L4_disc......')
+    print("Calculating the DHI of the L3_L4_disc......")
     L3_L4_disc = output[7, :, :]
     L4 = output[8, :, :]
     HV4, point_L4_h, point_L4_w = calcu_HV(L4)
     HV_big.append(HV4)
-    small_WD34, big_WD34, point_fenge34 = calcu_WD(L3_L4_disc, point_L3_h, point_L3_w, point_L4_h, point_L4_w)
+    small_WD34, big_WD34, point_fenge34 = calcu_WD(
+        L3_L4_disc, point_L3_h, point_L3_w, point_L4_h, point_L4_w
+    )
     WD_big.append(big_WD34)
     point_fenge_big.append(np.array(point_fenge34))
-    DH34 = calcu_HD(L3_L4_disc, point_fenge34[0], point_fenge34[1], point_fenge34[2], point_fenge34[3], small_WD34)
+    DH34 = calcu_HD(
+        L3_L4_disc,
+        point_fenge34[0],
+        point_fenge34[1],
+        point_fenge34[2],
+        point_fenge34[3],
+        small_WD34,
+    )
     HD_big.append(DH34)
     DHI34 = 2 * DH34 / (HV3 + HV4)
     DHI_big.append(DHI34)
-    print('The DHI of the L3_L4_disc is ', DHI34)
+    print("The DHI of the L3_L4_disc is ", DHI34)
     # 计算高宽比
     DWR34 = DH34 / big_WD34
     DWR_big.append(DWR34)
-    print('The DWR of the L3_L4_disc is ', DWR34)
+    print("The DWR of the L3_L4_disc is ", DWR34)
 
     # DHI45
-    print('Calculating the DHI of the L4_L5_disc......')
+    print("Calculating the DHI of the L4_L5_disc......")
     L4_L5_disc = output[9, :, :]
     L5 = output[10, :, :]
     HV5, point_L5_h, point_L5_w = calcu_HV(L5)
     HV_big.append(HV5)
-    small_WD45, big_WD45, point_fenge45 = calcu_WD(L4_L5_disc, point_L4_h, point_L4_w, point_L5_h, point_L5_w)
+    small_WD45, big_WD45, point_fenge45 = calcu_WD(
+        L4_L5_disc, point_L4_h, point_L4_w, point_L5_h, point_L5_w
+    )
     WD_big.append(big_WD45)
     point_fenge_big.append(np.array(point_fenge45))
-    DH45 = calcu_HD(L4_L5_disc, point_fenge45[0], point_fenge45[1], point_fenge45[2], point_fenge45[3], small_WD45)
+    DH45 = calcu_HD(
+        L4_L5_disc,
+        point_fenge45[0],
+        point_fenge45[1],
+        point_fenge45[2],
+        point_fenge45[3],
+        small_WD45,
+    )
     HD_big.append(DH45)
     DHI45 = 2 * DH45 / (HV4 + HV5)
     DHI_big.append(DHI45)
-    print('The DHI of the L4_L5_disc is ', DHI45)
+    print("The DHI of the L4_L5_disc is ", DHI45)
     # 计算高宽比
     DWR45 = DH45 / big_WD45
     DWR_big.append(DWR45)
-    print('The DWR of the L4_L5_disc is ', DWR45)
-
+    print("The DWR of the L4_L5_disc is ", DWR45)
 
     # DHI5S1
-    print('Calculating the DHI of the L5_S1_disc......')
+    print("Calculating the DHI of the L5_S1_disc......")
     L5_S1_disc = output[11, :, :]
     S1 = output[12, :, :]
     HVS1, point_S1_h, point_S1_w = calcu_HV_S1(S1)
     HV_big.append(HVS1)
-    small_WD5S1, big_WD5S1, point_fenge5S1 = calcu_WD(L5_S1_disc, point_L5_h, point_L5_w, point_S1_h, point_S1_w)
+    small_WD5S1, big_WD5S1, point_fenge5S1 = calcu_WD(
+        L5_S1_disc, point_L5_h, point_L5_w, point_S1_h, point_S1_w
+    )
     WD_big.append(big_WD5S1)
     point_fenge_big.append(np.array(point_fenge5S1))
-    DH5S1 = calcu_HD(L5_S1_disc, point_fenge5S1[0], point_fenge5S1[1], point_fenge5S1[2], point_fenge5S1[3], small_WD5S1)
+    DH5S1 = calcu_HD(
+        L5_S1_disc,
+        point_fenge5S1[0],
+        point_fenge5S1[1],
+        point_fenge5S1[2],
+        point_fenge5S1[3],
+        small_WD5S1,
+    )
     HD_big.append(DH5S1)
     # DHI5S1 = 2 * DH5S1 / (HVS1 + HV5)
     # 稍微更改一下第五节腰椎DHI指数的计算公式，不用S1的高度了
     DHI5S1 = DH5S1 / HV5
     DHI_big.append(DHI5S1)
-    print('The DHI of the L5_S1_disc is ', DHI5S1)
+    print("The DHI of the L5_S1_disc is ", DHI5S1)
     # 计算高宽比
     DWR5S1 = DH5S1 / big_WD5S1
     DWR_big.append(DWR5S1)
-    print('The DWR of the L5_S1_disc is ', DWR5S1)
+    print("The DWR of the L5_S1_disc is ", DWR5S1)
 
     # 存储所有角点
-    point_big_h = [point_L1_h, point_L2_h, point_L3_h, point_L4_h, point_L5_h, point_S1_h]
-    point_big_w = [point_L1_w, point_L2_w, point_L3_w, point_L4_w, point_L5_w, point_S1_w]
+    point_big_h = [
+        point_L1_h,
+        point_L2_h,
+        point_L3_h,
+        point_L4_h,
+        point_L5_h,
+        point_S1_h,
+    ]
+    point_big_w = [
+        point_L1_w,
+        point_L2_w,
+        point_L3_w,
+        point_L4_w,
+        point_L5_w,
+        point_S1_w,
+    ]
     # 储存所有分割点
     point_fenge_big = np.array(point_fenge_big)
-    point_fenge_h_big = [point_fenge_big[0, :, 0], point_fenge_big[1, :, 0], point_fenge_big[2, :, 0],
-                         point_fenge_big[3, :, 0], point_fenge_big[4, :, 0]]
-    point_fenge_w_big = [point_fenge_big[0, :, 1], point_fenge_big[1, :, 1], point_fenge_big[2, :, 1],
-                         point_fenge_big[3, :, 1], point_fenge_big[4, :, 1]]
+    point_fenge_h_big = [
+        point_fenge_big[0, :, 0],
+        point_fenge_big[1, :, 0],
+        point_fenge_big[2, :, 0],
+        point_fenge_big[3, :, 0],
+        point_fenge_big[4, :, 0],
+    ]
+    point_fenge_w_big = [
+        point_fenge_big[0, :, 1],
+        point_fenge_big[1, :, 1],
+        point_fenge_big[2, :, 1],
+        point_fenge_big[3, :, 1],
+        point_fenge_big[4, :, 1],
+    ]
 
-    return DHI_big, DWR_big, HD_big, HV_big, point_big_h, point_big_w, point_fenge_h_big, point_fenge_w_big
-
+    return (
+        DHI_big,
+        DWR_big,
+        HD_big,
+        HV_big,
+        point_big_h,
+        point_big_w,
+        point_fenge_h_big,
+        point_fenge_w_big,
+    )
