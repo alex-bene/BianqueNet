@@ -18,6 +18,10 @@ RUN apt install -y libgl1-mesa-glx
 COPY requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
+# Expose streamlit port
+EXPOSE 8501
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
 WORKDIR /app
 COPY . /app
 
@@ -26,5 +30,7 @@ COPY . /app
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["streamlit", "run", "streamlit_app.py"]
+# # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
+# CMD ["streamlit", "run", "streamlit_app.py"]
+# An ENTRYPOINT allows you to configure a container that will run as an executable
+ENTRYPOINT ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
