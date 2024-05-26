@@ -1,10 +1,12 @@
 import copy
 import os
+import shutil
 
 import cv2
 import numpy as np
 import pandas as pd
 import torch
+from PIL import Image
 
 from function.calcu_DHI_512 import calcu_DHI
 from function.calcu_signal_strength import calcu_Sigs
@@ -87,8 +89,25 @@ if __name__ == "__main__":
             data_output_dir = os.path.join(
                 RESULTS_OUTPUT_DIR, im_name.split(".")[0]
             )
-            if not os.path.exists(data_output_dir):
-                os.mkdir(data_output_dir)
+            if os.path.exists(data_output_dir):
+                req_files = [
+                    "DH.png",
+                    "DHI.png",
+                    "HDR.png",
+                    "point_detect.BMP",
+                    "SI_dj.png",
+                    "SI_weizhi.png",
+                    "quantitative_analysis_results.xlsx",
+                ]
+                if all(
+                    os.path.exists(os.path.join(data_output_dir, req_file))
+                    for req_file in req_files
+                ):
+                    continue
+                else:
+                    shutil.rmtree(data_output_dir)
+
+            os.mkdir(data_output_dir)
 
             _, input_age, input_sex = get_metadata(im_name)
             input_sex = 0 if input_sex == "Female" else 1
@@ -97,8 +116,10 @@ if __name__ == "__main__":
             # input_sex = int(im_name_no_suffix[3])
             im_path = os.path.join(DATA_INPUT_DIR, im_name)
             print("processing " + str(im_path) + "." * 20)
-            input = cv2.imread(im_path)
-            out_cv = clahe_cv(input)
+            m_input = np.array(
+                Image.open(im_path).resize((512, 512), Image.BILINEAR)
+            )
+            out_cv = clahe_cv(m_input)
             input_img = image_only_transform(out_cv)
             input_img = torch.unsqueeze(input_img, 0)
             pred_img = model(input_img)
@@ -132,7 +153,7 @@ if __name__ == "__main__":
                 point_big_h = point_big_h.flatten()
                 point_big_w = np.array(point_big_w)
                 point_big_w = point_big_w.flatten()
-                point_input_pic = copy.deepcopy(input)
+                point_input_pic = copy.deepcopy(m_input)
                 point_size = 1
                 point_color = (0, 0, 255)  # BGR
                 thickness = 4
@@ -174,7 +195,7 @@ if __name__ == "__main__":
 
                 SI_parameter = []
                 # time_calcu_Sigs_bf = time.time()
-                inputs_Sigs = input
+                inputs_Sigs = m_input
                 output_Sigs = output.copy()
                 SI_big_final, disc_si_dif_final = calcu_Sigs(
                     inputs_Sigs, output_Sigs
@@ -241,9 +262,9 @@ if __name__ == "__main__":
                         "HDR/DWR percentage",
                     ],
                 )
-                data_quantitative_results[
-                    "SI grade"
-                ] = data_quantitative_results["SI grade"].astype(int)
+                data_quantitative_results["SI grade"] = (
+                    data_quantitative_results["SI grade"].astype(int)
+                )
 
                 quantitative_analysis_results_output_name_path = os.path.join(
                     data_output_dir, QUANTITATIVE_ANALYSIS_RESULTS_FILENAME
