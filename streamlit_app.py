@@ -5,7 +5,7 @@ from os import makedirs
 from os.path import exists as pexists
 from os.path import join as pjoin
 from typing import Tuple
-
+import shutil
 import pandas as pd
 import streamlit as st
 from PIL import Image
@@ -68,9 +68,8 @@ def update_multiselect_state(name, updated=None, deleted=None):
     if not updated and not deleted:
         return
     if deleted:
-        st.session_state[f"{name}_state"] = sorted(
-            set(st.session_state[name]) - deleted
-        )
+        st.session_state[name].remove(deleted)
+        st.session_state[f"{name}_state"] = sorted(st.session_state[name])
     elif updated:
         st.session_state[f"{name}_state"] = [
             v if v != updated[0] else updated[1] for v in st.session_state[name]
@@ -172,8 +171,14 @@ def app():
             # Delete image if delete button is pressed
             if delete_button:
                 os.remove(pjoin(INPUT_DIR, filename))
+                # also remove the output folder if exists
+                if os.path.exists(pjoin(OUTPUT_DIR, filename.split(".")[0])):
+                    shutil.rmtree(pjoin(OUTPUT_DIR, filename.split(".")[0]))
                 update_multiselect_state("previewer", deleted=filename)
-                st.experimental_rerun()
+                update_multiselect_state(
+                    "results", deleted=filename.split(".")[0]
+                )
+                st.rerun()
 
             # Show form to edit metadata
             # Create form button state if it doesn't exist
@@ -212,10 +217,22 @@ def app():
                             pjoin(INPUT_DIR, filename),
                             pjoin(INPUT_DIR, updated_filename),
                         )
+                        if os.path.exists(
+                            pjoin(OUTPUT_DIR, filename.split(".")[0])
+                        ):
+                            os.rename(
+                                pjoin(OUTPUT_DIR, filename.split(".")[0]),
+                                pjoin(
+                                    OUTPUT_DIR, updated_filename.split(".")[0]
+                                ),
+                            )
                         update_multiselect_state(
                             "previewer", updated=(filename, updated_filename)
                         )
-                        st.experimental_rerun()
+                        update_multiselect_state(
+                            "results", updated=(filename, updated_filename)
+                        )
+                        st.rerun()
 
     # ############################ Process Images #############################
     st.divider()
