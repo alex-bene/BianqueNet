@@ -74,7 +74,7 @@ def scatter_mean_std(
 
     # for metric in metrics:
     sns.set_context("talk", font_scale=1, rc={"line.linrwidth": 0.5})
-    plt.rc("font", family="Times New Roman")
+    plt.rc("font", family="monospace")
     fig1 = plt.figure(figsize=fig_size)
     # f_DHI.tight_layout()# Adjust overall whitespace
     fig1.subplots_adjust(wspace=0.3, hspace=0)  # Adjust subplot spacing
@@ -85,10 +85,10 @@ def scatter_mean_std(
         ax = sns.lineplot(
             x="age",
             y=vertebra,
-            palette=c,
+            palette=c if metric != "SI" else None,
             hue="gender" if metric != "SI" else None,
             data=baseline[vertebra],
-            ci="sd",  # type: ignore
+            errorbar="sd",  # type: ignore
         )
         if idx == 0 and metric != "SI":
             plt.legend(loc="center right", bbox_to_anchor=(1, 0.8), ncol=1)
@@ -111,14 +111,14 @@ def scatter_mean_std(
 
     # Draw scatter points at each level
     sns.set_context("talk", font_scale=1, rc={"line.linrwidth": 0.5})
-    plt.rc("font", family="Times New Roman")
+    plt.rc("font", family="monospace")
     fig2 = plt.figure(figsize=(11.25, 12))
     ax1 = sns.lineplot(
         x="location",
         y="SI",
         hue="grade",
         data=SI_biaozhun,  # type: ignore
-        ci="sd",  # type: ignore
+        errorbar="sd",  # type: ignore
     )
     for i in range(5):
         ax1.scatter(i, data[i], s=80, marker=marker, c=c_point)
