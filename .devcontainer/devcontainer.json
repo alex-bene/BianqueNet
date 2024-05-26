@@ -34,7 +34,7 @@
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
 						"source.organizeImports": "explicit"
-					},
+					}
 				},
 				"black-formatter.args": [
 					"--line-length",
