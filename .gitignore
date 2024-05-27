@@ -169,3 +169,11 @@ weights_big_apex/deeplab_upernet_aspp_psp_ab_swin_skips_1288/deeplab_upernet_asp
 .vscode
 
 .DS_Store
+
+# ignore output folder except for subfolder
+output/*
+!output/D20230410-A085-SM/
+
+# ignore input folder except for subfolder
+input/data_input/*
+!input/data_input/D20230410-A085-SM.BMP
