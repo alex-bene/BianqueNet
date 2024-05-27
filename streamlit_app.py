@@ -1,11 +1,12 @@
 import os
+import shutil
 import subprocess
 from datetime import datetime
 from os import makedirs
 from os.path import exists as pexists
 from os.path import join as pjoin
 from typing import Tuple
-import shutil
+
 import pandas as pd
 import streamlit as st
 from PIL import Image
@@ -68,7 +69,8 @@ def update_multiselect_state(name, updated=None, deleted=None):
     if not updated and not deleted:
         return
     if deleted:
-        st.session_state[name].remove(deleted)
+        if deleted in st.session_state[name]:
+            st.session_state[name].remove(deleted)
         st.session_state[f"{name}_state"] = sorted(st.session_state[name])
     elif updated:
         st.session_state[f"{name}_state"] = [
