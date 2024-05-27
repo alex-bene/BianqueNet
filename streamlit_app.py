@@ -9,24 +9,24 @@ from typing import Tuple
 
 import pandas as pd
 import streamlit as st
+from huggingface_hub import hf_hub_download
 from PIL import Image
 
 from function.shiyan_jihe_signal_mean_std_plot_function import scatter_mean_std
 
 
 def download_bianquenet(download_path):
+    REPO_ID = "alexbene/BianqueNet"
+    FILENAME = "deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.pth"
+
     if os.path.exists(download_path):
         return
 
-    import io
-    import zipfile
-
-    import requests
-
-    url = "https://p-lux1.pcloud.com/cBZFsIjWMZkN4hxdZZZyT6o7kZ2ZZrN0ZkZC3n1jZn4Zq8ZJ8Z6RZRQZsFZ4RZKLZ28Zi4ZrzZQzZgQZuLZ6DBkVZMOuQ4OziFoJDFkvFJ0S1yXXuFWjX/deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.zip"
-    r = requests.get(url)
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    z.extractall(os.path.dirname(download_path))
+    hf_hub_download(
+        repo_id=REPO_ID,
+        filename=FILENAME,
+        local_dir=os.path.dirname(download_path),
+    )
 
 
 DATETIME_FORMAT = "%Y%m%d"
