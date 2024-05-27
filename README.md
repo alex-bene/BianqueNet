@@ -8,6 +8,7 @@ python_version: 3.8
 sdk_version: 1.35.0
 app_file: streamlit_app.py
 pinned: false
+models: [alexbene/BianqueNet]
 ---
 
 # Quantitative analysis of intervertebral disc degeneration
