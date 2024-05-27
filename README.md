@@ -1,3 +1,15 @@
+---
+title: Intervertebral Disc Degeneration Analysis
+emoji: 🌍
+colorFrom: red
+colorTo: indigo
+sdk: streamlit
+python_version: 3.8
+sdk_version: 1.35.0
+app_file: streamlit_app.py
+pinned: false
+---
+
 # Quantitative analysis of intervertebral disc degeneration
 
 This project is used for quantitative analysis of intervertebral disc(IVD) degeneration on T2MRI images
