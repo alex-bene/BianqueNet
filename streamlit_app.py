@@ -97,12 +97,34 @@ def update_multiselect_state(name, updated=None, deleted=None):
 # Define Streamlit app
 def app():
     st.title("Spline Analysis")
+    st.markdown(
+        "The system expect [spine sagittal T2-weighted MRI images](https://www.google.com/search?sca_esv=668e1abf6fdfcd6c&sca_upv=1&sxsrf=ADLYWIKmLutts_nNNe55bLngCChY73LyDA:1716834734152&q=spine+sagittal+T2-weighted+MRI+images&uds=ADvngMg3XiBUUido4UvvhKSfTjoFyMqEg7zenUa1FhiE3LIwud3pyBZq0PhDtIOIJUYEKWxP8yVIcw6QDVNzmA6ehh2PjMjY23Z3g9Gh2ld_QPsdsZ2T5_JXsNIkZAKJtUKFWLGcqeGeIUxr9esg6YYcCUgzmgqgmVtAxaxvR0uhierPy2oLXxGXVHpgdGn9nPWlzocXA3YNxG74Lb_9YrdnEPwc8knw3q8IhuJDXEsjdJinSBd9lWJgRNyRS6OBxT4oFphddNXEyClap4xZ_BeGU3ZGxTX-heWzUAe527AjkVe3XfhBpeNvT8tIppylAmM_dtCsLFrkBHeOuWtV4m5pb6z6v3cee1QL-ogr4Wy89PNxoCfoTBM2gbjxLKBCbly1mMUYQ4gK&udm=2&prmd=ivbnz&sa=X&ved=2ahUKEwjp993ju66GAxWY87sIHYIgAmsQtKgLegQIFRAB&biw=1712&bih=1329&dpr=2). "
+        "Images should be square and exported directly from the "
+        "corresponding software. For correct results, **rename the images "
+        " using the integrated `Edit` button to set the correct age and "
+        "gender**."
+    )
+    st.markdown(
+        "> **NOTE 📝**\n>\n"
+        "> This is just a frontend for the BianqueNet model introduced in "
+        '*"Deep learning-based high-accuracy quantitation for lumbar '
+        'intervertebral disc degeneration from MRI"* - '
+        "[\[paper\]](https://pubmed.ncbi.nlm.nih.gov/35149684/) "
+        "[\[original codebase\]](https://github.com/no-saint-no-angel/BianqueNet)"
+    )
 
     # CSS hack to vertically align the columns' content
     st.write(
         """<style>
         [data-testid="stHorizontalBlock"] {
             align-items: center;
+        }
+        a {
+            color: #5f54c1 !important;
+            text-decoration: none;
+        }
+        blockquote {
+            border-left: 2px solid #858585;
         }
         </style>
         """,
@@ -138,9 +160,12 @@ def app():
 
     st.sidebar.divider()
     st.sidebar.title("Menu")
-    st.sidebar.markdown("## [Overview and Rename](#images-overview-and-rename)")
-    st.sidebar.markdown("## [Process](#process-images)")
-    st.sidebar.markdown("## [Results](#results)")
+    st.sidebar.markdown(
+        "### - [Overview and Rename](#images-overview-and-rename)\n"
+        "### - [Process](#process-images)\n"
+        "### - [Results](#results)"
+    )
+    st.sidebar.divider()
 
     # ##################### Previw Images - Edit Metadata #####################
     st.header("Images Overview and Rename")
@@ -178,12 +203,12 @@ def app():
             date, age, sex = get_metadata(filename)
             # Show current metadata and edit button
             col1, col2 = right_col.columns([2, 1])
-            col1.write(f"Age: {age}")
-            col1.write(f"Sex: {sex}")
-            col1.write(f"Date Taken: {date.strftime('%Y-%m-%d')}")
-            edit_button = col2.button("Edit", key=f"edit_button_{filename}")
+            col1.write(f"**Age**: {age}")
+            col1.write(f"**Sex**: {sex}")
+            col1.write(f"**Date Taken**: {date.strftime('%Y-%m-%d')}")
+            edit_button = col2.button("**Edit**", key=f"edit_button_{filename}")
             delete_button = col2.button(
-                "Delete", key=f"delete_button_{filename}"
+                "**Delete**", key=f"delete_button_{filename}"
             )
 
             # Delete image if delete button is pressed
@@ -255,12 +280,14 @@ def app():
     # ############################ Process Images #############################
     st.divider()
     st.header("Process Images")
-    process_button = st.empty()
-    process_button.warning("Downloading model...")
 
-    # process_button = st.button(
-    #     "Process Images", type="primary", use_container_width=True
-    # )
+    if "model_downloaded" not in st.session_state:
+        st.session_state["model_downloaded"] = False
+
+    process_button = st.empty()
+
+    if not st.session_state["model_downloaded"]:
+        process_button.warning("Downloading model...")
 
     # ############################ Preview Results ############################
     st.divider()
@@ -402,13 +429,21 @@ def app():
             "deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.pth",
         )
     )
-    process_button.button(
-        "Process Images", type="primary", use_container_width=True
-    )
+    st.session_state["model_downloaded"] = True
+
     # Process images if process button is pressed
-    if process_button:
-        with st.spinner("Please wait as we process your images..."):
+    def on_process_button_click():
+        with process_button, st.spinner(
+            "Please wait as we process your images..."
+        ):
             subprocess.call(["python", "main.py"])
+
+    process_button.button(
+        "Process Images",
+        type="primary",
+        use_container_width=True,
+        on_click=on_process_button_click,
+    )
 
 
 if __name__ == "__main__":
