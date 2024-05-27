@@ -164,10 +164,6 @@ cython_debug/
 #  the entire idea folder.
 #.idea/
 
-# Output folder
-output/
-output_orig/
-
 # Model Weights -- deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003
 weights_big_apex/deeplab_upernet_aspp_psp_ab_swin_skips_1288/deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.pth
 .vscode
