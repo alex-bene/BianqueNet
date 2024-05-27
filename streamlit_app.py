@@ -13,6 +13,22 @@ from PIL import Image
 
 from function.shiyan_jihe_signal_mean_std_plot_function import scatter_mean_std
 
+
+def download_bianquenet(download_path):
+    if os.path.exists(download_path):
+        return
+
+    import io
+    import zipfile
+
+    import requests
+
+    url = "https://p-lux1.pcloud.com/cBZFsIjWMZkN4hxdZZZyT6o7kZ2ZZrN0ZkZC3n1jZn4Zq8ZJ8Z6RZRQZsFZ4RZKLZ28Zi4ZrzZQzZgQZuLZ6DBkVZMOuQ4OziFoJDFkvFJ0S1yXXuFWjX/deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.zip"
+    r = requests.get(url)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extractall(os.path.dirname(download_path))
+
+
 DATETIME_FORMAT = "%Y%m%d"
 
 # PATHS
@@ -239,13 +255,12 @@ def app():
     # ############################ Process Images #############################
     st.divider()
     st.header("Process Images")
-    process_button = st.button(
-        "Process Images", type="primary", use_container_width=True
-    )
-    # Process images if process button is pressed
-    if process_button:
-        with st.spinner("Please wait as we process your images..."):
-            subprocess.call(["python", "main.py"])
+    process_button = st.empty()
+    process_button.warning("Downloading model...")
+
+    # process_button = st.button(
+    #     "Process Images", type="primary", use_container_width=True
+    # )
 
     # ############################ Preview Results ############################
     st.divider()
@@ -378,6 +393,22 @@ def app():
                     table.error(
                         f"Spreadsheet {quant_analysis_results} can not be found"
                     )
+
+    download_bianquenet(
+        os.path.join(
+            ".",
+            "weights_big_apex",
+            "deeplab_upernet_aspp_psp_ab_swin_skips_1288",
+            "deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.pth",
+        )
+    )
+    process_button.button(
+        "Process Images", type="primary", use_container_width=True
+    )
+    # Process images if process button is pressed
+    if process_button:
+        with st.spinner("Please wait as we process your images..."):
+            subprocess.call(["python", "main.py"])
 
 
 if __name__ == "__main__":

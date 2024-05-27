@@ -17,7 +17,7 @@ from function.shiyan_jihe_signal_mean_std_plot_function import scatter_mean_std
 from network_big_apex import (
     network_deeplab_upernet_aspp_psp_ab_swin_skips_1288 as network,
 )
-from streamlit_app import get_metadata
+from streamlit_app import download_bianquenet, get_metadata
 
 SHOW_IMAGES = False
 DATA_INPUT_DIR = os.path.join(".", "input", "data_input")
@@ -65,6 +65,7 @@ def load_model(model_name, device):
         "deeplab_upernet_aspp_psp_ab_swin_skips_1288",
         "deeplab_upernet_aspp_psp_ab_swin_skips_1288_0.0003.pth",
     )
+    download_bianquenet(model_weight_path)
     model.load_state_dict(
         torch.load(model_weight_path, map_location=torch.device("cpu"))
     )
