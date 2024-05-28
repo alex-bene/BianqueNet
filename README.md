@@ -130,7 +130,7 @@ There are 5 main directories:
 │ └─deeplab_upernet_aspp_psp_ab_swin_skips_1288
 ```
 
-## TODO:
+## TODO
 - [ ] Replace "Date Taken" with a patient ID.
 - [ ] When we save uploaded files in the app, assign a user/session id to them
     so that only  the person who uploaded can see them.
