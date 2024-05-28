@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   bianquenet:
-    image: bianquenet
+    image: ivd_analysis
     build:
       context: .
       dockerfile: ./Dockerfile
