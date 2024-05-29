@@ -1,16 +1,3 @@
----
-title: Intervertebral Disc Degeneration Analysis
-emoji: 🌍
-colorFrom: red
-colorTo: indigo
-sdk: streamlit
-python_version: 3.8
-sdk_version: 1.35.0
-app_file: streamlit_app.py
-pinned: false
-models: [alexbene/BianqueNet]
----
-
 <a href="https://huggingface.co/alexbene/BianqueNet" target="_blank"><img alt="HF Model Badge" src="https://img.shields.io/badge/huggingface-model-%23FFD21E?logo=huggingface"></a>
 <a href="https://huggingface.co/spaces/alexbene/spine_analysis" target="_blank"><img alt="HF Space Badge" src="https://img.shields.io/badge/huggingface-space-%23FF9D00?logo=huggingface"></a>
 <a href="https://pubmed.ncbi.nlm.nih.gov/35149684" target="_blank"><img alt="Paper Badge" src="https://img.shields.io/badge/paper-blue?logo=readthedocs&logoColor=white"></a>
