@@ -11,6 +11,11 @@ pinned: false
 models: [alexbene/BianqueNet]
 ---
 
+<a href="https://huggingface.co/alexbene/BianqueNet" target="_blank"><img alt="HF Model Badge" src="https://img.shields.io/badge/huggingface-model-%23FFD21E?logo=huggingface"></a>
+<a href="https://huggingface.co/spaces/alexbene/spine_analysis" target="_blank"><img alt="HF Space Badge" src="https://img.shields.io/badge/huggingface-space-%23FF9D00?logo=huggingface"></a>
+<a href="https://pubmed.ncbi.nlm.nih.gov/35149684" target="_blank"><img alt="Paper Badge" src="https://img.shields.io/badge/paper-blue?logo=readthedocs&logoColor=white"></a>
+
+
 # Quantitative Analysis of Intervertebral Disc (IVD) Degeneration
 This project is used to perform quantitative analysis of IVD degeneration on spine
 sagittal T2-weighted MRI images. The generated reports include:
@@ -23,7 +28,9 @@ sagittal T2-weighted MRI images. The generated reports include:
 > This is just a frontend for the BianqueNet model introduced in 
 *"Deep learning-based high-accuracy quantitation for lumbar intervertebral disc
 degeneration from MRI"* - [\[paper\]](https://pubmed.ncbi.nlm.nih.gov/35149684/)
-[\[original codebase\]](https://github.com/no-saint-no-angel/BianqueNet)
+[\[original codebase\]](https://github.com/no-saint-no-angel/BianqueNet).
+> 
+> Slight adjustements have been made to the original code for readability and package version compatibility. Also, docker-related files have been added for easier development.
 
 ## Quickstart
 ### Docker
@@ -97,7 +104,7 @@ There are 5 main directories:
 3. `network_big_apex` folder contains different network structures.
 4. `output` folder stores the output results.
 5. `weights_big_apex folder` contains the training parameters of BianqueNet. You
-    can download the weights from the original repo's [pcloud link](https://u.pcloud.link/publink/show?code=XZ6DBkVZPdNHAOg14IHxKVDcnvq4pH1c4b1k) or from the [hugging face hub](https://huggingface.co/alexbene/BianqueNet). The app will auto-download the model when you run it if its not
+    can download the weights from the original repo's [pcloud link](https://u.pcloud.link/publink/show?code=XZ6DBkVZPdNHAOg14IHxKVDcnvq4pH1c4b1k) or from the [hugging face hub](https://huggingface.co/alexbene/BianqueNet). The app will auto-download the model when you run it, if it's not
     already downloaded on the expected folder.
 
 ```
