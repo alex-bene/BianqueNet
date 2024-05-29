@@ -25,7 +25,7 @@ The project includes the required docker files for running this project.
 To run the application, navigate to the project directory and execute:
 
 ```bash
-docker compose up
+docker compose up 
 ```
 
 Then, open your browser at `http://localhost:8501` to see the application.
