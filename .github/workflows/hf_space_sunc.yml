@@ -1,0 +1,24 @@
+name: Sync with Hugging Face Space
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sync with HF
+      uses: alex-bene/huggingface-space-sync-action@v0.1
+      with:
+        # The github repo you are syncing from. Required.
+        github_repo_id: alex-bene/BianqueNet
+        # The yaml headers file to use (will be prepended to your README.md in the HF space). Required.
+        yaml_header_path: hf_space_metadata.yml
+        # The Hugging Face repo id you want to sync to. (ex. 'username/reponame'). Required.
+        huggingface_repo_id: alexbene/spine_analysis
+        # Hugging Face token with write access and corresponding username. Required.
+        # Here, we provide a token that we called `HF_TOKEN` when we added the secret to our GitHub repo.
+        hf_username: alexbene
+        hf_token: ${{ secrets.HF_TOKEN }}
